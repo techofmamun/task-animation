@@ -22,6 +22,21 @@
   }
 }
 
+@keyframes contextMenuFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.92) translateY(-8px);
+  }
+}
+
+.context-menu.closing {
+  animation: contextMenuFadeOut 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
 .context-menu-header {
   padding: 8px 12px;
   font-size: 16px;
@@ -60,6 +75,17 @@
 .context-menu-item.danger:hover {
   background-color: #f5c2c7;
   color: #b02a37;
+}
+
+.context-menu-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: #94a3b8;
+}
+
+.context-menu-item.disabled:hover {
+  background-color: transparent;
+  transform: none;
 }
 
 .context-menu-separator {

@@ -1,31 +1,40 @@
-import React, { useState, useRef } from "react";
+import type { DragOverEvent, DragStartEvent } from "@dnd-kit/core";
 import {
-  DndContext,
   closestCenter,
+  DndContext,
+  DragOverlay,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  DragOverlay,
 } from "@dnd-kit/core";
-import type { DragStartEvent, DragOverEvent } from "@dnd-kit/core";
 import {
   arrayMove,
+  horizontalListSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
-  horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import React, { useRef, useState } from "react";
 
-import "./FormPageManager.css";
-import FormPage from "./FormPage";
+import { EmailIcon } from "../assets/icons";
+import {
+  CONTEXT_MENU_CONFIG,
+  DRAG_ACTIVATION_DISTANCE,
+  INITIAL_PAGES,
+  UI_TEXT,
+  type Page
+} from "../constants";
 import AddPageButton from "./AddPageButton";
 import AddPageTabButton from "./AddPageTabButton";
 import ContextMenu from "./ContextMenu";
-import { INITIAL_PAGES, CONTEXT_MENU_CONFIG, DRAG_ACTIVATION_DISTANCE, UI_TEXT, PAGE_NAMES, type Page } from "../constants";
-import { EmailIcon } from "../assets/icons";
+import FormPage from "./FormPage";
+import "./FormPageManager.css";
 
 const FormPageManager = () => {
   const [pages, setPages] = useState<Page[]>(INITIAL_PAGES);
+  const [newlyAddedPages, setNewlyAddedPages] = useState<Set<string>>(new Set());
+  const [deletingPages, setDeletingPages] = useState<Set<string>>(new Set());
+  const pageTabsRef = useRef<HTMLDivElement>(null);
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<{
@@ -69,13 +78,49 @@ const FormPageManager = () => {
     setActiveId(null);
   };
 
+  const scrollToNewPage = (pageId: string) => {
+    // Small delay to ensure the page is rendered
+    setTimeout(() => {
+      const pageElement = document.querySelector(`[data-page-id="${pageId}"]`);
+      if (pageElement && pageTabsRef.current) {
+        const container = pageTabsRef.current;
+        const elementRect = pageElement.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        
+        // Calculate scroll position to center the new page
+        const scrollLeft = container.scrollLeft + 
+          (elementRect.left - containerRect.left) - 
+          (containerRect.width / 2) + 
+          (elementRect.width / 2);
+          
+        container.scrollTo({
+          left: scrollLeft,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
+  };
+
   const addPageAfter = (afterId: string) => {
     const newPage: Page = {
       id: nextIdRef.current.toString(),
       name: `Page ${nextIdRef.current}`,
       isActive: false,
     };
+    const newPageId = newPage.id;
     nextIdRef.current++;
+
+    // Mark this page as newly added for animation
+    setNewlyAddedPages(prev => new Set(prev).add(newPageId));
+    
+    // Remove the animation class after animation completes
+    setTimeout(() => {
+      setNewlyAddedPages(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(newPageId);
+        return newSet;
+      });
+    }, 500); // Match animation duration
 
     setPages((items) => {
       const afterIndex = items.findIndex((item) => item.id === afterId);
@@ -83,6 +128,9 @@ const FormPageManager = () => {
       newItems.splice(afterIndex + 1, 0, newPage);
       return newItems;
     });
+
+    // Scroll to the new page
+    scrollToNewPage(newPageId);
   };
 
   const addPageAtEnd = () => {
@@ -91,9 +139,25 @@ const FormPageManager = () => {
       name: `Page ${nextIdRef.current}`,
       isActive: false,
     };
+    const newPageId = newPage.id;
     nextIdRef.current++;
 
+    // Mark this page as newly added for animation
+    setNewlyAddedPages(prev => new Set(prev).add(newPageId));
+    
+    // Remove the animation class after animation completes
+    setTimeout(() => {
+      setNewlyAddedPages(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(newPageId);
+        return newSet;
+      });
+    }, 500); // Match animation duration
+
     setPages((items) => [...items, newPage]);
+
+    // Scroll to the new page
+    scrollToNewPage(newPageId);
   };
 
   const selectPage = (pageId: string) => {
@@ -111,7 +175,12 @@ const FormPageManager = () => {
 
     // Get the clicked element's position
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    const { width: menuWidth, height: menuHeight, offset, minScreenMargin } = CONTEXT_MENU_CONFIG;
+    const {
+      width: menuWidth,
+      height: menuHeight,
+      offset,
+      minScreenMargin,
+    } = CONTEXT_MENU_CONFIG;
 
     // Position menu above the button by default
     let x = rect.left + rect.width / 2 - menuWidth / 2;
@@ -156,8 +225,59 @@ const FormPageManager = () => {
     hideContextMenu();
   };
 
-  const deletePage = (/* pageId: string */) => {
-    // Just close the menu - functionality not implemented yet
+  const deletePage = () => {
+    const pageToDelete = contextMenu.pageId;
+    
+    // Don't delete if it's the only page left
+    if (pages.length <= 1) {
+      hideContextMenu();
+      return;
+    }
+
+    // Find the page being deleted
+    const pageIndex = pages.findIndex(page => page.id === pageToDelete);
+    const pageToDeleteObj = pages[pageIndex];
+    
+    if (pageIndex === -1) {
+      hideContextMenu();
+      return;
+    }
+
+    // Mark page as deleting for animation
+    setDeletingPages(prev => new Set(prev).add(pageToDelete));
+
+    // Delay the actual deletion to allow animation
+    setTimeout(() => {
+      // If deleting the active page, select another page
+      if (pageToDeleteObj.isActive) {
+        // Select the next page, or the previous if it's the last page
+        const nextPageIndex = pageIndex < pages.length - 1 ? pageIndex + 1 : pageIndex - 1;
+        const nextPageId = pages[nextPageIndex].id;
+        
+        // First update the pages to select the new active page
+        setPages(currentPages => 
+          currentPages
+            .filter(page => page.id !== pageToDelete)
+            .map(page => ({
+              ...page,
+              isActive: page.id === nextPageId
+            }))
+        );
+      } else {
+        // Just remove the page if it's not active
+        setPages(currentPages => 
+          currentPages.filter(page => page.id !== pageToDelete)
+        );
+      }
+
+      // Clean up deleting state
+      setDeletingPages(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(pageToDelete);
+        return newSet;
+      });
+    }, 300); // Match animation duration
+
     hideContextMenu();
   };
 
@@ -171,68 +291,33 @@ const FormPageManager = () => {
     hideContextMenu();
   };
 
-  const activePage = pages.find((page) => page.isActive);
-
   return (
     <div className="form-page-manager" onClick={hideContextMenu}>
       <div className="content">
         <div className="content-body">
-          {activePage ? (
-            <div className="form-content">
-              <div className="form-header">
-                <h1>
-                  {activePage.name === PAGE_NAMES.INFO
-                    ? UI_TEXT.form.emailQuestion
-                    : activePage.name}
-                </h1>
-                {activePage.name === PAGE_NAMES.INFO && (
-                  <p className="form-subtitle">
-                    {UI_TEXT.form.emailSubtitle}
-                  </p>
-                )}
-              </div>
-              <div className="form-fields">
-                {activePage.name === PAGE_NAMES.INFO && (
-                  <div className="form-field">
-                    <div className="email-input-container">
-                      <div className="email-icon">
-                        <EmailIcon />
-                      </div>
-                      <input
-                        type="email"
-                        placeholder={UI_TEXT.form.emailPlaceholder}
-                      />
-                      <span className="required-indicator">*</span>
-                    </div>
+          <div className="form-content">
+            <div className="form-header">
+              <h1>{UI_TEXT.form.emailQuestion}</h1>
+              <p className="form-subtitle">{UI_TEXT.form.emailSubtitle}</p>
+            </div>
+            <div className="form-fields">
+              <div className="form-field">
+                <div className="email-input-container">
+                  <div className="email-icon">
+                    <EmailIcon />
                   </div>
-                )}
-                {activePage.name !== PAGE_NAMES.INFO && (
-                  <>
-                    <div className="form-field">
-                      <label>Sample Field 1:</label>
-                      <input type="text" placeholder="Enter some text..." />
-                    </div>
-                    <div className="form-field">
-                      <label>Sample Field 2:</label>
-                      <textarea
-                        placeholder="Enter some description..."
-                        rows={4}
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-              {activePage.name === PAGE_NAMES.INFO && (
-                <div className="form-actions">
-                  <button className="next-button">Next →</button>
+                  <input
+                    type="email"
+                    placeholder={UI_TEXT.form.emailPlaceholder}
+                  />
+                  <span className="required-indicator">*</span>
                 </div>
-              )}
+              </div>
             </div>
-          ) : (
-            <div className="empty-state">
-              <p>Select a page to view its content.</p>
+            <div className="form-actions">
+              <button className="next-button">Next →</button>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
@@ -248,16 +333,18 @@ const FormPageManager = () => {
             items={pages}
             strategy={horizontalListSortingStrategy}
           >
-            <div className="page-tabs">
+            <div className="page-tabs" ref={pageTabsRef}>
               {pages.map((page, index) => (
                 <React.Fragment key={page.id}>
-                  <div className="page-tab-item">
+                  <div className="page-tab-item" data-page-id={page.id}>
                     <FormPage
                       page={page}
                       onSelect={() => selectPage(page.id)}
                       onContextMenu={(e: React.MouseEvent) =>
                         showContextMenu(e, page.id)
                       }
+                      isNewlyAdded={newlyAddedPages.has(page.id)}
+                      isDeleting={deletingPages.has(page.id)}
                     />
                   </div>
                   {index < pages.length - 1 && (
@@ -299,6 +386,7 @@ const FormPageManager = () => {
           onDuplicate={() => duplicatePage()}
           onDelete={() => deletePage()}
           onClose={hideContextMenu}
+          canDelete={pages.length > 1}
         />
       )}
     </div>

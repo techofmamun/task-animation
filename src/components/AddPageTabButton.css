@@ -6,19 +6,20 @@
   padding: 8px 16px;
   border-radius: 8px;
   cursor: pointer;
-  background-color: #9da4b226;
-  border: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  border: 1px solid #9DA4B259;
   position: relative;
   user-select: none;
   white-space: nowrap;
-  color: #6c757d;
+  color: #000;
   font-size: 14px;
   min-height: 32px;
   min-width: 92px;
+  transition: all 0.2s ease;
 }
 
 .add-page-tab-button:hover {
-  background-color: #f8f9fa;
+  background-color: #9DA4B259;
   border-color: #dee2e6;
   color: #495057;
   --svg-color: #000;

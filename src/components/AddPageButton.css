@@ -23,6 +23,11 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.add-page-button:active {
+  transform: scale(0.9);
+  background-color: #f8f9fa;
+}
+
 .page-connector:hover .add-page-button {
   opacity: 1;
   transform: scale(1);

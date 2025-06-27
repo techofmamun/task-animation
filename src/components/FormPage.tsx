@@ -9,6 +9,8 @@ interface FormPageProps {
   onSelect: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
   isDragging?: boolean;
+  isNewlyAdded?: boolean;
+  isDeleting?: boolean;
 }
 
 const FormPage = ({
@@ -16,6 +18,8 @@ const FormPage = ({
   onSelect,
   onContextMenu,
   isDragging = false,
+  isNewlyAdded = false,
+  isDeleting = false,
 }: FormPageProps) => {
   const {
     attributes,
@@ -29,7 +33,7 @@ const FormPage = ({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isSortableDragging ? DRAG_STYLES.opacity : 1,
+    opacity: isSortableDragging ? 0 : 1, // Hide the original when dragging
     zIndex: isSortableDragging ? DRAG_STYLES.zIndex : "auto",
   };
 
@@ -41,15 +45,20 @@ const FormPage = ({
       {...listeners}
       className={`form-page ${page.isActive ? "active" : ""} ${
         isDragging ? "dragging" : ""
-      }`}
+      } ${isNewlyAdded ? "newly-added" : ""} ${isDeleting ? "deleting" : ""}`}
       data-page={page.name}
       onClick={(e) => {
         e.stopPropagation();
         if (!isSortableDragging) {
-          onSelect();
+          if (page.isActive) {
+            // If page is already active, show context menu
+            onContextMenu(e);
+          } else {
+            // If page is not active, select it
+            onSelect();
+          }
         }
       }}
-      onContextMenu={onContextMenu}
     >
       <div className="page-content">
         {page.icon}
