@@ -3,19 +3,23 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 8px;
   cursor: grab;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  background-color: transparent;
+  background-color: #9da4b226;
   border: 1px solid #e9ecef;
   position: relative;
   user-select: none;
   white-space: nowrap;
   color: #6c757d;
   font-size: 14px;
-  min-height: 36px;
+  min-height: 32px;
+  min-width: 92px;
   transform: translateY(0) scale(1);
   will-change: transform, background-color, border-color, box-shadow;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* CSS custom properties for SVG colors */
+  --svg-color: #8c93a1;
 }
 
 .form-page:active {
@@ -26,22 +30,36 @@
   background-color: #f8f9fa;
   border-color: #dee2e6;
   color: #495057;
-  transform: translateY(-4px) scale(1.02);
+  /* transform: translateY(-4px) scale(1.02); */
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .form-page.active {
   background-color: #e7f3ff;
   border-color: #b3d9ff;
-  color: #0056b3;
+  color: #1a1a1a;
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(0, 86, 179, 0.15);
+  --svg-color: #f59d0e;
+}
+
+/* Apply the custom property to SVG elements within the form page */
+.form-page svg {
+  color: var(--svg-color);
+}
+
+.form-page svg [stroke] {
+  stroke: var(--svg-color);
+}
+
+.form-page svg [fill]:not([fill="none"]) {
+  fill: var(--svg-color);
 }
 
 .form-page.active:hover {
   background-color: #d1ecf1;
   border-color: #bee5eb;
-  transform: translateY(-4px) scale(1.02);
+  /* transform: translateY(-4px) scale(1.02); */
   box-shadow: 0 8px 25px rgba(0, 86, 179, 0.25);
 }
 
@@ -51,7 +69,6 @@
   border-color: #007acc;
   transform: scale(1.08) rotate(2deg);
   z-index: 1000;
-  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .page-content {
@@ -65,9 +82,12 @@
   font-weight: inherit;
   color: inherit;
 }
-
+.page-content svg {
+  width: 20px;
+  height: 20px;
+}
 /* Add icons for different page types */
-.page-content::before {
+/* .page-content::before {
   content: '';
   width: 16px;
   height: 16px;
@@ -76,9 +96,9 @@
   background-position: center;
   opacity: 0.7;
   flex-shrink: 0;
-}
+} */
 
-.form-page[data-page="Info"] .page-content::before {
+/* .form-page[data-page="Info"] .page-content::before {
   content: '📋';
   font-size: 14px;
 }
@@ -94,13 +114,12 @@
 }
 
 .form-page[data-page="Ending"] .page-content::before {
-  content: '✅';
+content: '✅';
   font-size: 14px;
-}
+} */
 
 .form-page:active {
   transform: translateY(1px) scale(0.98);
-  transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
 
 .form-page.active:active {

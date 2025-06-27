@@ -1,24 +1,27 @@
 .add-page-tab-button {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  background-color: transparent;
+  background-color: #9da4b226;
   border: 1px solid #e9ecef;
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
   color: #6c757d;
   font-size: 14px;
-  min-height: 36px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  min-height: 32px;
+  min-width: 92px;
 }
 
 .add-page-tab-button:hover {
   background-color: #f8f9fa;
   border-color: #dee2e6;
   color: #495057;
+  --svg-color: #000;
 }
 
 .add-page-tab-button:active {
@@ -26,6 +29,6 @@
 }
 
 .add-page-tab-button svg {
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
 }
