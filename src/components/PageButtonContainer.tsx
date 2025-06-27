@@ -28,10 +28,10 @@ import {
 import AddPageButton from "./AddPageButton";
 import AddPageTabButton from "./AddPageTabButton";
 import ContextMenu from "./ContextMenu";
-import FormPage from "./FormPage";
-import "./FormPageManager.css";
+import PageButton from "./PageButton";
+import "./PageButtonContainer.css";
 
-const FormPageManager: React.FC = () => {
+const PageButtonContainer: React.FC = () => {
   const [pages, setPages] = useState<Page[]>(INITIAL_PAGES);
   const [newlyAddedPages, setNewlyAddedPages] = useState<Set<string>>(new Set());
   const [deletingPages, setDeletingPages] = useState<Set<string>>(new Set());
@@ -338,7 +338,7 @@ const FormPageManager: React.FC = () => {
               {pages.map((page, index) => (
                 <React.Fragment key={page.id}>
                   <div className="page-tab-item" data-page-id={page.id}>
-                    <FormPage
+                    <PageButton
                       page={page}
                       onSelect={() => selectPage(page.id)}
                       onContextMenu={(e: React.MouseEvent) =>
@@ -366,7 +366,7 @@ const FormPageManager: React.FC = () => {
           </SortableContext>
           <DragOverlay>
             {activeId ? (
-              <FormPage
+              <PageButton
                 page={pages.find((p) => p.id === activeId)!}
                 onSelect={() => {}}
                 onContextMenu={() => {}}
@@ -394,4 +394,4 @@ const FormPageManager: React.FC = () => {
   );
 };
 
-export default FormPageManager;
+export default PageButtonContainer;

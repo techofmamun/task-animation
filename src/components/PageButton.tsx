@@ -2,10 +2,10 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import "./FormPage.css";
+import "./PageButton.css";
 import { DRAG_STYLES, type Page } from "../constants";
 
-interface FormPageProps {
+interface PageProps {
   page: Page;
   onSelect: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
@@ -14,7 +14,7 @@ interface FormPageProps {
   isDeleting?: boolean;
 }
 
-const FormPage: React.FC<FormPageProps> = React.memo(({
+const PageButton: React.FC<PageProps> = React.memo(({
   page,
   onSelect,
   onContextMenu,
@@ -99,4 +99,4 @@ const FormPage: React.FC<FormPageProps> = React.memo(({
   );
 });
 
-export default FormPage;
+export default PageButton;

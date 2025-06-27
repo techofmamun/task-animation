@@ -1,4 +1,4 @@
-import FormPageManager from './components/FormPageManager'
+import PageButtonContainer from './components/PageButtonContainer'
 import ErrorBoundary from './components/ErrorBoundary'
 import './App.css'
 
@@ -6,7 +6,7 @@ function App() {
   return (
     <ErrorBoundary>
       <div className="app">
-        <FormPageManager />
+        <PageButtonContainer />
       </div>
     </ErrorBoundary>
   )
