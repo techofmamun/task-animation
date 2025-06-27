@@ -1,8 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Page } from "./FormPageManager";
+
 import "./FormPage.css";
-import { DRAG_STYLES } from "../constants";
+import { DRAG_STYLES, type Page } from "../constants";
 
 interface FormPageProps {
   page: Page;
