@@ -1,0 +1,31 @@
+.add-page-tab-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background-color: transparent;
+  border: 1px solid #e9ecef;
+  color: #6c757d;
+  font-size: 14px;
+  min-height: 36px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.add-page-tab-button:hover {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+  color: #495057;
+}
+
+.add-page-tab-button:active {
+  transform: scale(0.98);
+}
+
+.add-page-tab-button svg {
+  width: 14px;
+  height: 14px;
+}

@@ -1,0 +1,108 @@
+.form-page {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: grab;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  background-color: transparent;
+  border: 1px solid #e9ecef;
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+  color: #6c757d;
+  font-size: 14px;
+  min-height: 36px;
+  transform: translateY(0) scale(1);
+  will-change: transform, background-color, border-color, box-shadow;
+}
+
+.form-page:active {
+  cursor: grabbing;
+}
+
+.form-page:hover {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+  color: #495057;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.form-page.active {
+  background-color: #e7f3ff;
+  border-color: #b3d9ff;
+  color: #0056b3;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 86, 179, 0.15);
+}
+
+.form-page.active:hover {
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 86, 179, 0.25);
+}
+
+.form-page.dragging {
+  background-color: #ffffff;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  border-color: #007acc;
+  transform: scale(1.08) rotate(2deg);
+  z-index: 1000;
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.page-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-name {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+/* Add icons for different page types */
+.page-content::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.form-page[data-page="Info"] .page-content::before {
+  content: '📋';
+  font-size: 14px;
+}
+
+.form-page[data-page="Details"] .page-content::before {
+  content: '📝';
+  font-size: 14px;
+}
+
+.form-page[data-page="Other"] .page-content::before {
+  content: '📋';
+  font-size: 14px;
+}
+
+.form-page[data-page="Ending"] .page-content::before {
+  content: '✅';
+  font-size: 14px;
+}
+
+.form-page:active {
+  transform: translateY(1px) scale(0.98);
+  transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.form-page.active:active {
+  transform: translateY(1px) scale(0.98);
+}
