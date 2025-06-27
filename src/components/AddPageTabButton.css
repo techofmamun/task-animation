@@ -7,26 +7,28 @@
   border-radius: 8px;
   cursor: pointer;
   background-color: #f8f9fa;
-  border: 1px solid #9DA4B259;
+  border: 1px solid #9da4b259;
   position: relative;
   user-select: none;
   white-space: nowrap;
   color: #000;
   font-size: 14px;
-  min-height: 32px;
-  min-width: 92px;
   transition: all 0.2s ease;
+  min-height: 50px;
+  outline: none;
 }
 
 .add-page-tab-button:hover {
-  background-color: #9DA4B259;
-  border-color: #dee2e6;
-  color: #495057;
+  transform: scale(1.02);
   --svg-color: #000;
+  border: 1px solid #9da4b259;
 }
 
 .add-page-tab-button:active {
   transform: scale(0.98);
+}
+.add-page-tab-button:focus {
+  outline: none;
 }
 
 .add-page-tab-button svg {

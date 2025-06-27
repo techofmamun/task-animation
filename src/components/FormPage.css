@@ -12,13 +12,11 @@
   white-space: nowrap;
   color: #6c757d;
   font-size: 14px;
-  min-height: 32px;
-  min-width: 92px;
+  height: 32px;
+  width: 71px;
   transform: translateY(0) scale(1);
   will-change: transform, background-color, border-color, box-shadow;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* CSS custom properties for SVG colors */
   --svg-color: #8c93a1;
 }
 
@@ -27,23 +25,23 @@
 }
 
 .form-page:hover {
-  background-color: #9DA4B259;
+  background-color: #9da4b259;
   border-color: #dee2e6;
   color: #495057;
-  /* transform: translateY(-4px) scale(1.02); */
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .form-page.active {
-  background-color: #e7f3ff;
-  border-color: #b3d9ff;
+  background-color: #fff;
   color: #1a1a1a;
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(0, 86, 179, 0.15);
   --svg-color: #f59d0e;
 }
+.form-page:focus {
+  background-color: #e7f3ff;
+}
 
-/* Apply the custom property to SVG elements within the form page */
 .form-page svg {
   color: var(--svg-color);
 }
@@ -59,7 +57,6 @@
 .form-page.active:hover {
   background-color: #d1ecf1;
   border-color: #bee5eb;
-  /* transform: translateY(-4px) scale(1.02); */
   box-shadow: 0 8px 25px rgba(0, 86, 179, 0.25);
 }
 
