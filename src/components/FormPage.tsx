@@ -1,3 +1,4 @@
+import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -13,14 +14,14 @@ interface FormPageProps {
   isDeleting?: boolean;
 }
 
-const FormPage = ({
+const FormPage: React.FC<FormPageProps> = React.memo(({
   page,
   onSelect,
   onContextMenu,
   isDragging = false,
   isNewlyAdded = false,
   isDeleting = false,
-}: FormPageProps) => {
+}) => {
   const {
     attributes,
     listeners,
@@ -37,6 +38,42 @@ const FormPage = ({
     zIndex: isSortableDragging ? DRAG_STYLES.zIndex : "auto",
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isSortableDragging) {
+      if (page.isActive) {
+        // If page is already active, show context menu
+        onContextMenu(e);
+      } else {
+        // If page is not active, select it
+        onSelect();
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!isSortableDragging) {
+        if (page.isActive) {
+          // For keyboard accessibility, we'll trigger context menu at the center of the element
+          const rect = e.currentTarget.getBoundingClientRect();
+          const fakeMouseEvent = {
+            preventDefault: () => {},
+            stopPropagation: () => {},
+            currentTarget: e.currentTarget,
+            clientX: rect.left + rect.width / 2,
+            clientY: rect.top + rect.height / 2,
+          } as React.MouseEvent;
+          onContextMenu(fakeMouseEvent);
+        } else {
+          onSelect();
+        }
+      }
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -47,18 +84,12 @@ const FormPage = ({
         isDragging ? "dragging" : ""
       } ${isNewlyAdded ? "newly-added" : ""} ${isDeleting ? "deleting" : ""}`}
       data-page={page.name}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (!isSortableDragging) {
-          if (page.isActive) {
-            // If page is already active, show context menu
-            onContextMenu(e);
-          } else {
-            // If page is not active, select it
-            onSelect();
-          }
-        }
-      }}
+      role="button"
+      tabIndex={0}
+      aria-label={`${page.name} page${page.isActive ? ' (active)' : ''}`}
+      aria-pressed={page.isActive}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
     >
       <div className="page-content">
         {page.icon}
@@ -66,6 +97,6 @@ const FormPage = ({
       </div>
     </div>
   );
-};
+});
 
 export default FormPage;

@@ -14,7 +14,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 import { EmailIcon } from "../assets/icons";
 import {
@@ -22,6 +22,7 @@ import {
   DRAG_ACTIVATION_DISTANCE,
   INITIAL_PAGES,
   UI_TEXT,
+  ANIMATION_DURATIONS,
   type Page
 } from "../constants";
 import AddPageButton from "./AddPageButton";
@@ -30,7 +31,7 @@ import ContextMenu from "./ContextMenu";
 import FormPage from "./FormPage";
 import "./FormPageManager.css";
 
-const FormPageManager = () => {
+const FormPageManager: React.FC = () => {
   const [pages, setPages] = useState<Page[]>(INITIAL_PAGES);
   const [newlyAddedPages, setNewlyAddedPages] = useState<Set<string>>(new Set());
   const [deletingPages, setDeletingPages] = useState<Set<string>>(new Set());
@@ -57,11 +58,11 @@ const FormPageManager = () => {
     })
   );
 
-  const handleDragStart = (event: DragStartEvent) => {
+  const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string);
-  };
+  }, []);
 
-  const handleDragOver = (event: DragOverEvent) => {
+  const handleDragOver = useCallback((event: DragOverEvent) => {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
@@ -72,13 +73,13 @@ const FormPageManager = () => {
         return arrayMove(items, oldIndex, newIndex);
       });
     }
-  };
+  }, []);
 
-  const handleDragEnd = () => {
+  const handleDragEnd = useCallback(() => {
     setActiveId(null);
-  };
+  }, []);
 
-  const scrollToNewPage = (pageId: string) => {
+  const scrollToNewPage = useCallback((pageId: string) => {
     // Small delay to ensure the page is rendered
     setTimeout(() => {
       const pageElement = document.querySelector(`[data-page-id="${pageId}"]`);
@@ -98,8 +99,8 @@ const FormPageManager = () => {
           behavior: 'smooth'
         });
       }
-    }, 100);
-  };
+    }, ANIMATION_DURATIONS.SCROLL_TO_NEW_PAGE_DELAY);
+  }, []);
 
   const addPageAfter = (afterId: string) => {
     const newPage: Page = {
@@ -120,7 +121,7 @@ const FormPageManager = () => {
         newSet.delete(newPageId);
         return newSet;
       });
-    }, 500); // Match animation duration
+    }, ANIMATION_DURATIONS.PAGE_SLIDE_IN); // Match animation duration
 
     setPages((items) => {
       const afterIndex = items.findIndex((item) => item.id === afterId);
@@ -152,7 +153,7 @@ const FormPageManager = () => {
         newSet.delete(newPageId);
         return newSet;
       });
-    }, 500); // Match animation duration
+    }, ANIMATION_DURATIONS.PAGE_SLIDE_IN); // Match animation duration
 
     setPages((items) => [...items, newPage]);
 
@@ -276,7 +277,7 @@ const FormPageManager = () => {
         newSet.delete(pageToDelete);
         return newSet;
       });
-    }, 300); // Match animation duration
+    }, ANIMATION_DURATIONS.PAGE_SLIDE_OUT); // Match animation duration
 
     hideContextMenu();
   };

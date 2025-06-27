@@ -1,11 +1,14 @@
 import FormPageManager from './components/FormPageManager'
+import ErrorBoundary from './components/ErrorBoundary'
 import './App.css'
 
 function App() {
   return (
-    <div className="app">
-      <FormPageManager />
-    </div>
+    <ErrorBoundary>
+      <div className="app">
+        <FormPageManager />
+      </div>
+    </ErrorBoundary>
   )
 }
 

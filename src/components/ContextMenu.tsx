@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import "./ContextMenu.css";
 import { RenameIcon, CopyIcon, DuplicateIcon, DeleteIcon } from "../assets/icons";
-import { UI_TEXT } from "../constants";
+import { UI_TEXT, ANIMATION_DURATIONS } from "../constants";
 
 interface ContextMenuProps {
   x: number;
@@ -32,7 +32,7 @@ const ContextMenu = ({
     // Wait for animation to complete before actually closing
     setTimeout(() => {
       onClose();
-    }, 150); // Match the animation duration
+    }, ANIMATION_DURATIONS.CONTEXT_MENU_TRANSITION); // Match the animation duration
   }, [onClose]);
 
   useEffect(() => {

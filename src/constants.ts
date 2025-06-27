@@ -71,8 +71,22 @@ export const UI_TEXT = {
   },
 };
 
+// Animation Durations (in milliseconds)
+export const ANIMATION_DURATIONS = {
+  PAGE_SLIDE_IN: 500,
+  PAGE_SLIDE_OUT: 300,
+  CONTEXT_MENU_TRANSITION: 150,
+  SCROLL_TO_NEW_PAGE_DELAY: 100,
+} as const;
+
+// Accessibility
+export const ACCESSIBILITY = {
+  KEYBOARD_TRIGGER_KEYS: ['Enter', ' '],
+  ESCAPE_KEY: 'Escape',
+} as const;
+
 // Style Constants
 export const DRAG_STYLES = {
   opacity: 0.7,
   zIndex: 1000,
-};
+} as const;

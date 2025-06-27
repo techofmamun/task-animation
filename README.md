@@ -1,53 +1,75 @@
-# React + TypeScript + Vite
+# Task Animation - Multi-Step Form UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production-ready React/TypeScript application featuring an animated multi-step form with draggable step navigation, context menus, and smooth animations.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Multi-Step Form Navigation**: Bottom-aligned horizontal step tabs with active state indicators
+- **Drag & Drop Reordering**: Reorder form steps with smooth animations using dnd-kit
+- **Context Menus**: Right-click or click active step to access context menu with actions
+- **Dynamic Page Management**: Add/delete pages with slide-in/slide-out animations
+- **Keyboard Accessibility**: Full keyboard navigation support with focus indicators
+- **Responsive Design**: Optimized for various screen sizes with smooth scrolling
+- **Error Boundaries**: Production-ready error handling and graceful fallbacks
 
-## Expanding the ESLint configuration
+## Technology Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 19.1.0** - Latest React with concurrent features
+- **TypeScript 5.8.3** - Full type safety with strict configuration
+- **Vite 7.0.0** - Fast build tool and development server
+- **@dnd-kit** - Modern drag and drop library for React
+- **ESLint** - Code linting with TypeScript support
+- **CSS3** - Modern CSS with custom properties and animations
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Development
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Installation
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Development Server
+```bash
+npm run dev
+```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Build for Production
+```bash
+npm run build
+```
 
-export default tseslint.config([
-  globalIgnores(['dist']),
+### Linting
+```bash
+npm run lint
+```
+
+### Preview Production Build
+```bash
+npm run preview
+```
+
+## Production Considerations
+
+### Performance Optimizations
+- React.memo for component memoization
+- useCallback for event handler optimization
+- CSS animations instead of JavaScript for better performance
+- Tree-shaking enabled for smaller bundle size
+
+### Error Handling
+- Error boundaries to catch and handle React errors gracefully
+- TypeScript strict mode for compile-time error prevention
+- ESLint rules for code quality and consistency
+
+### Accessibility
+- WCAG 2.1 compliant focus management
+- Keyboard navigation support
+- Screen reader friendly ARIA attributes
+- High contrast focus indicators
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
