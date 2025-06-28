@@ -38,6 +38,7 @@ const PageButtonContainer: React.FC = () => {
   const pageTabsRef = useRef<HTMLDivElement>(null);
 
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<{
     visible: boolean;
     x: number;
@@ -65,6 +66,8 @@ const PageButtonContainer: React.FC = () => {
   const handleDragOver = useCallback((event: DragOverEvent) => {
     const { active, over } = event;
 
+    setOverId(over?.id as string | null);
+
     if (active.id !== over?.id) {
       setPages((items) => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
@@ -76,7 +79,11 @@ const PageButtonContainer: React.FC = () => {
   }, []);
 
   const handleDragEnd = useCallback(() => {
-    setActiveId(null);
+    // Add a small delay to let the physics settle properly
+    setTimeout(() => {
+      setActiveId(null);
+      setOverId(null);
+    }, 50); // Small delay for better visual continuity
   }, []);
 
   const scrollToNewPage = useCallback((pageId: string) => {
@@ -346,6 +353,7 @@ const PageButtonContainer: React.FC = () => {
                       }
                       isNewlyAdded={newlyAddedPages.has(page.id)}
                       isDeleting={deletingPages.has(page.id)}
+                      isOver={overId === page.id && activeId !== page.id}
                     />
                   </div>
                   {index < pages.length - 1 && (

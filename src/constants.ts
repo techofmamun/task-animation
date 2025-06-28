@@ -77,6 +77,24 @@ export const ANIMATION_DURATIONS = {
   PAGE_SLIDE_OUT: 300,
   CONTEXT_MENU_TRANSITION: 150,
   SCROLL_TO_NEW_PAGE_DELAY: 100,
+  DRAG_SETTLE: 1800, // Increased for gentler physics
+  DRAG_PREVIEW: 200,
+  SPRING_SETTLE: 650,
+  MOMENTUM_SETTLE: 1400, // Increased for smoother momentum settle
+} as const;
+
+// Advanced Physics Constants for realistic drag UX
+export const PHYSICS = {
+  DRAG_SCALE: 1.06,
+  DRAG_ROTATION: 1.5,
+  HOVER_LIFT: -2,
+  SETTLE_OVERSHOOT: 1.08, // Increased overshoot
+  MOMENTUM_DAMPING: 0.88,
+  SPRING_TENSION: 300, // Spring physics
+  SPRING_FRICTION: 26,
+  VELOCITY_THRESHOLD: 0.1,
+  MASS: 1.2, // Simulated mass for momentum
+  RESTITUTION: 0.3, // Bounce factor
 } as const;
 
 // Accessibility
