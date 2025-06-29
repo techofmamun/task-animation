@@ -35,15 +35,16 @@ const ContextMenu = ({
       const menuRect = menuRef.current.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
       
+      // Use the provided coordinates directly (already centered by parent)
       let adjustedX = x;
-      const adjustedY = y; // Keep original Y position - same as web
+      const adjustedY = y;
       
       // Define margin based on screen size
       const isMobile = viewportWidth <= 768;
       const margin = isMobile ? 12 : 16;
       
-      // Only adjust horizontal position to prevent going off-screen
-      if (x + menuRect.width > viewportWidth - margin) {
+      // Only adjust horizontal position if it would go off-screen
+      if (adjustedX + menuRect.width > viewportWidth - margin) {
         adjustedX = viewportWidth - menuRect.width - margin;
       }
       if (adjustedX < margin) {
