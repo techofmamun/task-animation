@@ -5,6 +5,7 @@ import {
   DragOverlay,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -52,6 +53,12 @@ const PageButtonContainer: React.FC = () => {
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: DRAG_ACTIVATION_DISTANCE,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
