@@ -206,10 +206,10 @@ body.dragging {
   }
   
   /* Disable momentum scrolling during drag */
-  * {
+  /* * {
     -webkit-overflow-scrolling: touch;
     touch-action: none;
-  }
+  } */
 }
 
 .form-page.dragging .page-content {
