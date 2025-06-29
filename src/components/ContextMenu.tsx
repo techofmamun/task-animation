@@ -34,38 +34,20 @@ const ContextMenu = ({
     if (menuRef.current) {
       const menuRect = menuRef.current.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
       
       let adjustedX = x;
-      let adjustedY = y;
+      const adjustedY = y; // Keep original Y position - same as web
       
-      // Define margins based on screen size
+      // Define margin based on screen size
       const isMobile = viewportWidth <= 768;
       const margin = isMobile ? 12 : 16;
       
-      // Adjust horizontal position
+      // Only adjust horizontal position to prevent going off-screen
       if (x + menuRect.width > viewportWidth - margin) {
         adjustedX = viewportWidth - menuRect.width - margin;
       }
       if (adjustedX < margin) {
         adjustedX = margin;
-      }
-      
-      // Adjust vertical position
-      if (y + menuRect.height > viewportHeight - margin) {
-        adjustedY = viewportHeight - menuRect.height - margin;
-      }
-      if (adjustedY < margin) {
-        adjustedY = margin;
-      }
-      
-      // On mobile, prefer positioning above the touch point if there's more space
-      if (isMobile && y > viewportHeight / 2) {
-        const spaceAbove = y - margin;
-        const spaceBelow = viewportHeight - y - margin;
-        if (spaceAbove > menuRect.height && spaceAbove > spaceBelow) {
-          adjustedY = y - menuRect.height - 8; // 8px gap from touch point
-        }
       }
       
       setAdjustedPosition({ x: adjustedX, y: adjustedY });
