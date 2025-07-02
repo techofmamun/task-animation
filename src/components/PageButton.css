@@ -21,9 +21,6 @@
     color 0.3s ease-out, box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   outline: none !important;
   outline-offset: 0 !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
   /* CSS custom properties for SVG colors */
   --svg-color: #8c93a1;
 
@@ -31,10 +28,6 @@
   touch-action: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
-  -webkit-user-drag: element;
-  -khtml-user-drag: element;
-  -moz-user-drag: element;
-  -o-user-drag: element;
   box-sizing: border-box;
 }
 
@@ -49,52 +42,7 @@
   outline-offset: 0 !important;
 }
 
-.form-page:active .page-content {
-  animation: activePulse 0.2s ease-out;
-}
-
-@keyframes activePulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(0.95);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.form-page:hover {
-  background-color: #9da4b259;
-  border-color: #dee2e6;
-  color: #495057;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px) scale(1.02);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    background-color 0.3s ease-out, border-color 0.3s ease-out,
-    color 0.3s ease-out, box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.form-page:hover .page-content {
-  animation: hoverBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-@keyframes hoverBounce {
-  0% {
-    transform: scale(1) translateY(0);
-  }
-  30% {
-    transform: scale(1.05) translateY(-1px);
-  }
-  60% {
-    transform: scale(0.98) translateY(0.5px);
-  }
-  100% {
-    transform: scale(1) translateY(0);
-  }
-}
-
+/* Active page styling */
 .form-page.active {
   background-color: #fff;
   color: #1a1a1a;
@@ -104,22 +52,6 @@
   transition: background-color 0.3s ease-out, color 0.3s ease-out,
     border-color 0.3s ease-out, box-shadow 0.3s ease-out;
 }
-.form-page:focus {
-  outline: none !important;
-  outline-offset: 0 !important;
-}
-
-.form-page svg {
-  color: var(--svg-color);
-}
-
-.form-page svg [stroke] {
-  stroke: var(--svg-color);
-}
-
-.form-page svg [fill]:not([fill="none"]) {
-  fill: var(--svg-color);
-}
 
 .form-page.active:hover {
   background-color: #d1ecf1;
@@ -127,6 +59,17 @@
   box-shadow: 0 8px 25px rgba(0, 86, 179, 0.25);
 }
 
+/* Hover states */
+.form-page:hover:not(.dragging):not(.deleting):not(.drag-settling) {
+  background-color: #9da4b259;
+  border-color: #dee2e6;
+  color: #495057;
+  transform: translateY(-2px) scale(1.02);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Dragging state */
 .form-page.dragging {
   opacity: 0.8;
   transform: scale(1.06) translateZ(0);
@@ -135,129 +78,24 @@
   transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 999;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  /* border: 1px solid #007bff; */
   cursor: grabbing !important;
   will-change: transform, opacity, filter;
-
-  /* Optimize for mobile dragging performance */
   touch-action: none;
   -webkit-transform: translateZ(0);
 }
 
-/* Mobile-specific optimizations */
-@media (hover: none) and (pointer: coarse) {
-  .form-page {
-    /* Larger touch target for mobile */
-    min-height: 44px;
-    padding: 12px 16px;
-    /* Better touch feedback */
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
 
-  .form-page:active {
-    /* Enhanced mobile press feedback */
-    transform: translateY(1px) scale(0.98);
-    transition: transform 0.1s ease-out;
-  }
-
-  .form-page.dragging {
-    /* Mobile drag visual feedback */
-    opacity: 0.9;
-    transform: scale(1.05) translateZ(0);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
-  }
+/* Drag over animation */
+.form-page.drag-over {
+  transform: translateX(4px) scale(0.97) rotate(0.5deg);
+  opacity: 0.85;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 6px 20px rgba(100, 181, 246, 0.3);
 }
 
-/* Prevent iOS Safari bounce scrolling during drag */
-body.dragging {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  touch-action: none;
-}
-
-/* Additional mobile touch optimizations */
-@media (max-width: 768px) {
-  .form-page {
-    /* Improve touch responsiveness */
-    cursor: grab;
-    -webkit-cursor: grab;
-    /* Prevent text selection during touch */
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  .form-page.dragging {
-    cursor: grabbing;
-    -webkit-cursor: grabbing;
-  }
-
-  /* Disable momentum scrolling during drag */
-  /* * {
-    -webkit-overflow-scrolling: touch;
-    touch-action: none;
-  } */
-}
-
-.form-page.dragging .page-content {
-  animation: dragContentFloat 0.6s ease-in-out infinite alternate;
-}
-
-@keyframes dragContentFloat {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    transform: translateY(-1px) scale(1.01);
-  }
-}
-
-/* Momentum trail effect */
-.form-page.dragging::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    rgba(0, 123, 255, 0.1) 50%,
-    transparent 100%
-  );
-  border-radius: inherit;
-  opacity: 0;
-  animation: momentumTrail 0.8s ease-out infinite;
-}
-
-@keyframes momentumTrail {
-  0% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-  50% {
-    opacity: 0.6;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-}
-
+/* Page lifecycle animations */
 .form-page.newly-added {
   animation: pageSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.form-page.deleting {
-  animation: pageSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes pageSlideIn {
@@ -271,6 +109,10 @@ body.dragging {
   }
 }
 
+.form-page.deleting {
+  animation: pageSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
 @keyframes pageSlideOut {
   from {
     opacity: 1;
@@ -282,19 +124,84 @@ body.dragging {
   }
 }
 
-/* Ultra-Snappy Physics Animations with Natural Damping */
+/* Content styling */
+.page-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-name {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+.page-content svg {
+  width: 20px;
+  height: 20px;
+  color: var(--svg-color);
+}
+
+.form-page svg [stroke] {
+  stroke: var(--svg-color);
+}
+
+.form-page svg [fill]:not([fill="none"]) {
+  fill: var(--svg-color);
+}
+
+/* Mobile optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .form-page {
+    min-height: 44px;
+    padding: 12px 16px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .form-page:active {
+    transform: translateY(1px) scale(0.98);
+    transition: transform 0.1s ease-out;
+  }
+
+  .form-page.dragging {
+    opacity: 0.9;
+    transform: scale(1.05) translateZ(0);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+  }
+}
+
+@media (max-width: 768px) {
+  .form-page {
+    cursor: grab;
+    -webkit-cursor: grab;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .form-page.dragging {
+    cursor: grabbing;
+    -webkit-cursor: grabbing;
+  }
+}
+
+/* Prevent iOS Safari bounce scrolling during drag */
+body.dragging {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+
 .form-page.drag-settling-physics {
   animation: dragPhysicsSettle 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  animation-fill-mode: forwards;
-}
-
-.form-page.drag-settling-fast {
-  animation: dragFastSettle 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  animation-fill-mode: forwards;
-}
-
-.form-page.drag-settling-momentum {
-  animation: dragMomentumSettle 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   animation-fill-mode: forwards;
 }
 
@@ -323,567 +230,5 @@ body.dragging {
   }
   100% {
     transform: scale(1) translateY(0) rotate(0deg);
-  }
-}
-
-/* Quick Drop with Enhanced Responsiveness */
-@keyframes dragFastSettle {
-  0% {
-    transform: scale(1.03) translateY(-2px) rotate(0.6deg);
-  }
-  18% {
-    transform: scale(0.96) translateY(0.8px) rotate(-0.2deg);
-  }
-  40% {
-    transform: scale(1.02) translateY(-0.4px) rotate(0.08deg);
-  }
-  65% {
-    transform: scale(0.99) translateY(0.2px) rotate(-0.03deg);
-  }
-  85% {
-    transform: scale(1.005) translateY(-0.1px) rotate(0.015deg);
-  }
-  100% {
-    transform: scale(1) translateY(0) rotate(0deg);
-  }
-}
-
-/* Momentum Drop with Realistic Slide and Inertia */
-@keyframes dragMomentumSettle {
-  0% {
-    transform: scale(1.04) translateX(6px) translateY(-2.5px) rotate(0.8deg);
-  }
-  15% {
-    transform: scale(0.95) translateX(3px) translateY(1px) rotate(-0.3deg);
-  }
-  30% {
-    transform: scale(1.025) translateX(1.5px) translateY(-0.6px) rotate(0.15deg);
-  }
-  48% {
-    transform: scale(0.985) translateX(0.8px) translateY(0.3px) rotate(-0.06deg);
-  }
-  65% {
-    transform: scale(1.01) translateX(0.4px) translateY(-0.2px) rotate(0.03deg);
-  }
-  80% {
-    transform: scale(0.995) translateX(0.2px) translateY(0.1px)
-      rotate(-0.015deg);
-  }
-  92% {
-    transform: scale(1.003) translateX(0.1px) translateY(-0.05px)
-      rotate(0.008deg);
-  }
-  100% {
-    transform: scale(1) translateX(0) translateY(0) rotate(0deg);
-  }
-}
-
-/* Physics-Based Drag Over Animation with Inertia */
-.form-page.drag-over {
-  transform: translateX(4px) scale(0.97) rotate(0.5deg);
-  opacity: 0.85;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 6px 20px rgba(100, 181, 246, 0.3);
-}
-
-.page-content {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.page-name {
-  font-size: inherit;
-  font-weight: inherit;
-  color: inherit;
-}
-.page-content svg {
-  width: 20px;
-  height: 20px;
-}
-
-/* Enhanced hover states with physics */
-.form-page:hover:not(.dragging):not(.deleting):not(.drag-settling) {
-  transform: translateY(-2px) scale(1.02);
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-}
-/* 
-.form-page:not(.dragging):not(.active):hover {
-  background-color: #f8f9fa;
-  border-color: #dee2e6;
-} */
-
-/* Improved active states with better feedback */
-.form-page:active:not(.dragging):not(.drag-settling) {
-  transform: translateY(1px) scale(0.98);
-  transition: all 0.08s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-}
-
-/* Better visual feedback on drag initiation */
-.form-page:active.dragging {
-  animation: dragInitiation 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-@keyframes dragInitiation {
-  0% {
-    transform: scale(1) rotate(0deg);
-    box-shadow: 0 2px 8px rgba(0, 86, 179, 0.15);
-  }
-  50% {
-    transform: scale(0.98) rotate(-0.5deg);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  100% {
-    transform: scale(1.08) rotate(2deg);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
-  }
-}
-
-.form-page.drag-settling-ultra {
-  animation: dragUltraSpringSettle 2.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-  animation-fill-mode: forwards;
-}
-
-/* Ultra-Smooth Spring Settle with Enhanced but Gentle Physics */
-@keyframes dragUltraSpringSettle {
-  0% {
-    transform: scale(1.05) rotate(1.2deg) translateY(-1.5px) translateZ(0);
-    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.22), 0 6px 15px rgba(0, 0, 0, 0.15);
-    filter: brightness(1.04) saturate(1.06);
-    opacity: 0;
-    background-color: #f8f9fa;
-    border-color: #007bff;
-  }
-  8% {
-    transform: scale(0.92) rotate(-1deg) translateY(1.2px) translateZ(0);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
-    filter: brightness(1.02) saturate(1.03);
-    opacity: 0.2;
-    background-color: #f0f4f6;
-    border-color: #2196f3;
-  }
-  16% {
-    transform: scale(1.06) rotate(0.8deg) translateY(-1.8px) translateZ(0);
-    box-shadow: 0 16px 40px rgba(0, 86, 179, 0.16),
-      0 6px 18px rgba(0, 86, 179, 0.12);
-    filter: brightness(1.05) saturate(1.07);
-    opacity: 0.5;
-    background-color: #e8f0f4;
-    border-color: #42a5f5;
-  }
-  24% {
-    transform: scale(0.94) rotate(-0.6deg) translateY(1px) translateZ(0);
-    box-shadow: 0 6px 16px rgba(0, 86, 179, 0.13),
-      0 2px 8px rgba(0, 86, 179, 0.09);
-    filter: brightness(1.025) saturate(1.04);
-    opacity: 0.7;
-    background-color: #e0ecf2;
-    border-color: #64b5f6;
-  }
-  32% {
-    transform: scale(1.03) rotate(0.4deg) translateY(-1.2px) translateZ(0);
-    box-shadow: 0 10px 25px rgba(0, 86, 179, 0.14),
-      0 4px 12px rgba(0, 86, 179, 0.1);
-    filter: brightness(1.03) saturate(1.05);
-    opacity: 0.85;
-    background-color: #d8e8f0;
-    border-color: #81c784;
-  }
-  40% {
-    transform: scale(0.97) rotate(-0.3deg) translateY(0.8px) translateZ(0);
-    box-shadow: 0 6px 18px rgba(0, 86, 179, 0.12),
-      0 2px 7px rgba(0, 86, 179, 0.085);
-    filter: brightness(1.02) saturate(1.03);
-    opacity: 0.9;
-    background-color: #d0e4ee;
-    border-color: #a5d6a7;
-  }
-  50% {
-    transform: scale(1.02) rotate(0.2deg) translateY(-0.6px) translateZ(0);
-    box-shadow: 0 8px 20px rgba(0, 86, 179, 0.13),
-      0 3px 9px rgba(0, 86, 179, 0.095);
-    filter: brightness(1.025) saturate(1.035);
-    opacity: 0.95;
-    background-color: #c8e0ec;
-    border-color: #c8e6c9;
-  }
-  60% {
-    transform: scale(0.985) rotate(-0.15deg) translateY(0.4px) translateZ(0);
-    box-shadow: 0 5px 15px rgba(0, 86, 179, 0.115),
-      0 2px 6px rgba(0, 86, 179, 0.08);
-    filter: brightness(1.015) saturate(1.025);
-    opacity: 0.97;
-    background-color: #c0dcea;
-    border-color: #dcedc8;
-  }
-  70% {
-    transform: scale(1.01) rotate(0.1deg) translateY(-0.3px) translateZ(0);
-    box-shadow: 0 6px 16px rgba(0, 86, 179, 0.12),
-      0 2.5px 7px rgba(0, 86, 179, 0.085);
-    filter: brightness(1.012) saturate(1.02);
-    opacity: 0.99;
-    background-color: #b8d8e8;
-    border-color: #e9ecef;
-  }
-  80% {
-    transform: scale(0.995) rotate(-0.08deg) translateY(0.2px) translateZ(0);
-    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.115),
-      0 1.5px 5px rgba(0, 86, 179, 0.08);
-    filter: brightness(1.008) saturate(1.015);
-    opacity: 0.995;
-    background-color: #b0d4e6;
-    border-color: #e9ecef;
-  }
-  90% {
-    transform: scale(1.005) rotate(0.05deg) translateY(-0.15px) translateZ(0);
-    box-shadow: 0 3px 10px rgba(0, 86, 179, 0.118),
-      0 1.2px 4px rgba(0, 86, 179, 0.082);
-    filter: brightness(1.005) saturate(1.01);
-    opacity: 0.998;
-    background-color: #a8d0e4;
-    border-color: #e9ecef;
-  }
-  95% {
-    transform: scale(0.998) rotate(-0.03deg) translateY(0.1px) translateZ(0);
-    box-shadow: 0 2.5px 8px rgba(0, 86, 179, 0.12),
-      0 1px 3.5px rgba(0, 86, 179, 0.085);
-    filter: brightness(1.003) saturate(1.006);
-    opacity: 0.999;
-    background-color: #a0cce2;
-    border-color: #e9ecef;
-  }
-  100% {
-    transform: scale(1) rotate(0deg) translateY(0) translateZ(0);
-    box-shadow: 0 2px 8px rgba(0, 86, 179, 0.12),
-      0 1px 3px rgba(0, 86, 179, 0.08);
-    filter: brightness(1) saturate(1);
-    opacity: 1;
-    background-color: #9da4b226;
-    border-color: #e9ecef;
-  }
-}
-
-/* Gentle Jello-Style Settle for Energetic Drags */
-.form-page.drag-settling-jello {
-  animation: dragJelloSettle 2.6s cubic-bezier(0.25, 0.8, 0.25, 1);
-  animation-fill-mode: forwards;
-}
-
-@keyframes dragJelloSettle {
-  0% {
-    transform: scale(1.06) rotate(1.5deg) translateY(-2px) skewX(0.5deg)
-      translateZ(0);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25), 0 6px 16px rgba(0, 0, 0, 0.18);
-    filter: brightness(1.05) saturate(1.08);
-    opacity: 0;
-    background-color: #f8f9fa;
-    border-color: #007bff;
-  }
-  10% {
-    transform: scale(0.9) rotate(-1.2deg) translateY(1.5px) skewX(-0.4deg)
-      translateZ(0);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    filter: brightness(1.02) saturate(1.04);
-    opacity: 0.3;
-    background-color: #f0f4f6;
-    border-color: #2196f3;
-  }
-  20% {
-    transform: scale(1.05) rotate(1deg) translateY(-1.8px) skewX(0.3deg)
-      translateZ(0);
-    box-shadow: 0 14px 32px rgba(0, 86, 179, 0.18),
-      0 5px 14px rgba(0, 86, 179, 0.12);
-    filter: brightness(1.04) saturate(1.06);
-    opacity: 0.6;
-    background-color: #e8f0f4;
-    border-color: #42a5f5;
-  }
-  30% {
-    transform: scale(0.94) rotate(-0.8deg) translateY(1.2px) skewX(-0.2deg)
-      translateZ(0);
-    box-shadow: 0 6px 16px rgba(0, 86, 179, 0.14);
-    filter: brightness(1.025) saturate(1.04);
-    opacity: 0.8;
-    background-color: #e0ecf2;
-    border-color: #64b5f6;
-  }
-  40% {
-    transform: scale(1.03) rotate(0.6deg) translateY(-1px) skewX(0.15deg)
-      translateZ(0);
-    box-shadow: 0 10px 24px rgba(0, 86, 179, 0.15);
-    filter: brightness(1.03) saturate(1.05);
-    opacity: 0.9;
-    background-color: #d8e8f0;
-    border-color: #81c784;
-  }
-  50% {
-    transform: scale(0.97) rotate(-0.4deg) translateY(0.8px) skewX(-0.1deg)
-      translateZ(0);
-    box-shadow: 0 6px 18px rgba(0, 86, 179, 0.13);
-    filter: brightness(1.02) saturate(1.03);
-    opacity: 0.95;
-    background-color: #d0e4ee;
-    border-color: #a5d6a7;
-  }
-  60% {
-    transform: scale(1.015) rotate(0.3deg) translateY(-0.6px) skewX(0.08deg)
-      translateZ(0);
-    box-shadow: 0 7px 20px rgba(0, 86, 179, 0.14);
-    filter: brightness(1.015) saturate(1.025);
-    opacity: 0.98;
-    background-color: #c8e0ec;
-    border-color: #c8e6c9;
-  }
-  70% {
-    transform: scale(0.99) rotate(-0.2deg) translateY(0.4px) skewX(-0.05deg)
-      translateZ(0);
-    box-shadow: 0 5px 14px rgba(0, 86, 179, 0.125);
-    filter: brightness(1.01) saturate(1.02);
-    opacity: 0.99;
-    background-color: #c0dcea;
-    border-color: #dcedc8;
-  }
-  80% {
-    transform: scale(1.008) rotate(0.15deg) translateY(-0.3px) skewX(0.03deg)
-      translateZ(0);
-    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.13);
-    filter: brightness(1.008) saturate(1.015);
-    opacity: 0.995;
-    background-color: #b8d8e8;
-    border-color: #e9ecef;
-  }
-  90% {
-    transform: scale(0.996) rotate(-0.08deg) translateY(0.2px) skewX(-0.02deg)
-      translateZ(0);
-    box-shadow: 0 3px 10px rgba(0, 86, 179, 0.125);
-    filter: brightness(1.005) saturate(1.01);
-    opacity: 0.998;
-    background-color: #b0d4e6;
-    border-color: #e9ecef;
-  }
-  95% {
-    transform: scale(1.003) rotate(0.05deg) translateY(-0.1px) skewX(0.01deg)
-      translateZ(0);
-    box-shadow: 0 2.5px 8px rgba(0, 86, 179, 0.128);
-    filter: brightness(1.003) saturate(1.006);
-    opacity: 0.999;
-    background-color: #a8d0e4;
-    border-color: #e9ecef;
-  }
-  100% {
-    transform: scale(1) rotate(0deg) translateY(0) skewX(0deg) translateZ(0);
-    box-shadow: 0 2px 8px rgba(0, 86, 179, 0.12);
-    filter: brightness(1) saturate(1);
-    opacity: 1;
-    background-color: #9da4b226;
-    border-color: #e9ecef;
-  }
-}
-
-/* Gentle Liquid-Style Settle for Complex Drags */
-.form-page.drag-settling-liquid {
-  animation: dragLiquidSettle 3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  animation-fill-mode: forwards;
-}
-
-@keyframes dragLiquidSettle {
-  0% {
-    transform: scale(1.07) rotate(2deg) translateY(-2.5px) skewX(0.8deg)
-      skewY(0.3deg) translateZ(0);
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28), 0 8px 20px rgba(0, 0, 0, 0.2);
-    filter: brightness(1.06) saturate(1.1);
-    opacity: 0;
-  }
-  8% {
-    transform: scale(0.88) rotate(-1.5deg) translateY(2px) skewX(-0.6deg)
-      skewY(-0.2deg) translateZ(0);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
-    filter: brightness(1.02) saturate(1.03);
-    opacity: 0.2;
-  }
-  16% {
-    transform: scale(1.06) rotate(1.2deg) translateY(-2.2px) skewX(0.5deg)
-      skewY(0.18deg) translateZ(0);
-    box-shadow: 0 16px 38px rgba(0, 86, 179, 0.2),
-      0 6px 18px rgba(0, 86, 179, 0.14);
-    filter: brightness(1.05) saturate(1.08);
-    opacity: 0.5;
-  }
-  24% {
-    transform: scale(0.92) rotate(-1deg) translateY(1.6px) skewX(-0.4deg)
-      skewY(-0.15deg) translateZ(0);
-    box-shadow: 0 5px 14px rgba(0, 86, 179, 0.13);
-    filter: brightness(1.03) saturate(1.05);
-    opacity: 0.7;
-  }
-  32% {
-    transform: scale(1.04) rotate(0.8deg) translateY(-1.8px) skewX(0.3deg)
-      skewY(0.12deg) translateZ(0);
-    box-shadow: 0 12px 28px rgba(0, 86, 179, 0.16);
-    filter: brightness(1.04) saturate(1.06);
-    opacity: 0.85;
-  }
-  40% {
-    transform: scale(0.95) rotate(-0.6deg) translateY(1.2px) skewX(-0.25deg)
-      skewY(-0.1deg) translateZ(0);
-    box-shadow: 0 7px 18px rgba(0, 86, 179, 0.14);
-    filter: brightness(1.025) saturate(1.04);
-    opacity: 0.9;
-  }
-  50% {
-    transform: scale(1.025) rotate(0.4deg) translateY(-1px) skewX(0.2deg)
-      skewY(0.08deg) translateZ(0);
-    box-shadow: 0 9px 22px rgba(0, 86, 179, 0.15);
-    filter: brightness(1.03) saturate(1.05);
-    opacity: 0.95;
-  }
-  60% {
-    transform: scale(0.97) rotate(-0.3deg) translateY(0.8px) skewX(-0.15deg)
-      skewY(-0.06deg) translateZ(0);
-    box-shadow: 0 6px 16px rgba(0, 86, 179, 0.13);
-    filter: brightness(1.02) saturate(1.03);
-    opacity: 0.97;
-  }
-  70% {
-    transform: scale(1.015) rotate(0.2deg) translateY(-0.6px) skewX(0.1deg)
-      skewY(0.04deg) translateZ(0);
-    box-shadow: 0 7px 18px rgba(0, 86, 179, 0.14);
-    filter: brightness(1.015) saturate(1.025);
-    opacity: 0.99;
-  }
-  80% {
-    transform: scale(0.99) rotate(-0.15deg) translateY(0.4px) skewX(-0.08deg)
-      skewY(-0.03deg) translateZ(0);
-    box-shadow: 0 5px 14px rgba(0, 86, 179, 0.125);
-    filter: brightness(1.01) saturate(1.02);
-    opacity: 0.995;
-  }
-  90% {
-    transform: scale(1.008) rotate(0.1deg) translateY(-0.3px) skewX(0.05deg)
-      skewY(0.02deg) translateZ(0);
-    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.13);
-    filter: brightness(1.008) saturate(1.015);
-    opacity: 0.998;
-  }
-  95% {
-    transform: scale(0.996) rotate(-0.08deg) translateY(0.15px) skewX(-0.03deg)
-      skewY(-0.01deg) translateZ(0);
-    box-shadow: 0 3px 9px rgba(0, 86, 179, 0.125);
-    filter: brightness(1.004) saturate(1.008);
-    opacity: 0.999;
-  }
-  100% {
-    transform: scale(1) rotate(0deg) translateY(0) skewX(0deg) skewY(0deg)
-      translateZ(0);
-    box-shadow: 0 2px 8px rgba(0, 86, 179, 0.12);
-    filter: brightness(1) saturate(1);
-    opacity: 1;
-  }
-}
-
-/* Spring Animation for Items Being Repositioned During Drag */
-.form-page.drag-repositioning {
-  animation: dragRepositionSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)
-    forwards;
-}
-
-@keyframes dragRepositionSpring {
-  0% {
-    transform: translateX(0) scale(1) rotate(0deg);
-  }
-  20% {
-    transform: translateX(-12px) scale(0.94) rotate(-0.8deg);
-  }
-  40% {
-    transform: translateX(3px) scale(1.03) rotate(0.3deg);
-  }
-  60% {
-    transform: translateX(-4px) scale(0.98) rotate(-0.2deg);
-  }
-  80% {
-    transform: translateX(1px) scale(1.01) rotate(0.1deg);
-  }
-  100% {
-    transform: translateX(0) scale(1) rotate(0deg);
-  }
-}
-
-/* Spring Animation for Items Moving to New Position */
-.form-page.drag-position-shift {
-  animation: dragPositionShift 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)
-    forwards;
-}
-
-@keyframes dragPositionShift {
-  0% {
-    transform: translateX(0) translateY(0) scale(1) rotate(0deg);
-  }
-  15% {
-    transform: translateX(-8px) translateY(-2px) scale(0.96) rotate(-0.5deg);
-  }
-  35% {
-    transform: translateX(4px) translateY(1px) scale(1.02) rotate(0.2deg);
-  }
-  55% {
-    transform: translateX(-2px) translateY(-0.5px) scale(0.99) rotate(-0.1deg);
-  }
-  75% {
-    transform: translateX(1px) translateY(0.2px) scale(1.005) rotate(0.05deg);
-  }
-  90% {
-    transform: translateX(-0.3px) translateY(-0.1px) scale(0.998)
-      rotate(-0.02deg);
-  }
-  100% {
-    transform: translateX(0) translateY(0) scale(1) rotate(0deg);
-  }
-}
-
-/* Spring Animation for Items Being Pushed Aside */
-.form-page.drag-push-aside {
-  animation: dragPushAside 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-@keyframes dragPushAside {
-  0% {
-    transform: translateX(0) scale(1) rotate(0deg);
-  }
-  25% {
-    transform: translateX(-15px) scale(0.92) rotate(-1deg);
-  }
-  50% {
-    transform: translateX(-8px) scale(0.96) rotate(-0.3deg);
-  }
-  75% {
-    transform: translateX(-10px) scale(0.94) rotate(-0.5deg);
-  }
-  100% {
-    transform: translateX(-10px) scale(0.94) rotate(-0.4deg);
-  }
-}
-
-/* Return Animation for Pushed Items */
-.form-page.drag-push-return {
-  animation: dragPushReturn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)
-    forwards;
-}
-
-@keyframes dragPushReturn {
-  0% {
-    transform: translateX(-10px) scale(0.94) rotate(-0.4deg);
-  }
-  30% {
-    transform: translateX(2px) scale(1.03) rotate(0.2deg);
-  }
-  60% {
-    transform: translateX(-1px) scale(0.995) rotate(-0.05deg);
-  }
-  85% {
-    transform: translateX(0.3px) scale(1.002) rotate(0.02deg);
-  }
-  100% {
-    transform: translateX(0) scale(1) rotate(0deg);
   }
 }
