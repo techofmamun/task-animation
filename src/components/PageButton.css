@@ -1,3 +1,4 @@
+/* Base button styling */
 .form-page {
   display: flex;
   align-items: center;
@@ -15,16 +16,12 @@
   height: 50px;
   width: 125px;
   transform: translateY(0) scale(1) rotate(0deg);
-  will-change: transform, background-color, border-color, box-shadow;
+  will-change: transform;
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
     background-color 0.3s ease-out, border-color 0.3s ease-out,
     color 0.3s ease-out, box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   outline: none !important;
-  outline-offset: 0 !important;
-  /* CSS custom properties for SVG colors */
   --svg-color: #8c93a1;
-
-  /* Enable touch events and prevent default touch behaviors */
   touch-action: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
@@ -34,12 +31,8 @@
 .form-page:active {
   cursor: grabbing;
   transform: translateY(2px) scale(0.98);
-  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    background-color 0.15s ease-out, border-color 0.15s ease-out,
-    color 0.15s ease-out, box-shadow 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 0.1s ease-out;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  outline: none !important;
-  outline-offset: 0 !important;
 }
 
 /* Active page styling */
@@ -49,23 +42,18 @@
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(0, 86, 179, 0.15);
   --svg-color: #f59d0e;
-  transition: background-color 0.3s ease-out, color 0.3s ease-out,
-    border-color 0.3s ease-out, box-shadow 0.3s ease-out;
 }
 
 .form-page.active:hover {
-  background-color: #d1ecf1;
   border-color: #bee5eb;
   box-shadow: 0 8px 25px rgba(0, 86, 179, 0.25);
 }
 
-/* Hover states */
-.form-page:hover:not(.dragging):not(.deleting):not(.drag-settling) {
+/* Hover state */
+.form-page:hover:not(.dragging):not(.deleting):not(.drag-settling-physics):not(.active) {
   background-color: #9da4b259;
   border-color: #dee2e6;
   color: #495057;
-  transform: translateY(-2px) scale(1.02);
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
@@ -73,19 +61,13 @@
 .form-page.dragging {
   opacity: 0.8;
   transform: scale(1.06) translateZ(0);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.15);
-  filter: brightness(1.08) saturate(1.15) blur(0.2px);
-  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  cursor: grabbing !important;
   z-index: 999;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  cursor: grabbing !important;
-  will-change: transform, opacity, filter;
-  touch-action: none;
-  -webkit-transform: translateZ(0);
 }
 
-
-/* Drag over animation */
+/* Drag over state */
 .form-page.drag-over {
   transform: translateX(4px) scale(0.97) rotate(0.5deg);
   opacity: 0.85;
@@ -93,36 +75,6 @@
   box-shadow: 0 6px 20px rgba(100, 181, 246, 0.3);
 }
 
-/* Page lifecycle animations */
-.form-page.newly-added {
-  animation: pageSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes pageSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-
-.form-page.deleting {
-  animation: pageSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes pageSlideOut {
-  from {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(20px) scale(0.95);
-  }
-}
 
 /* Content styling */
 .page-content {
@@ -156,15 +108,12 @@
   .form-page {
     min-height: 44px;
     padding: 12px 16px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    /* Slightly larger touch target for mobile */
+    width: 135px;
   }
 
   .form-page:active {
     transform: translateY(1px) scale(0.98);
-    transition: transform 0.1s ease-out;
   }
 
   .form-page.dragging {
@@ -172,16 +121,17 @@
     transform: scale(1.05) translateZ(0);
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
   }
+  
+  /* Increase visual feedback for mobile */
+  .form-page.drag-settling-spring {
+    animation-duration: calc(var(--spring-duration, 0.8s) * 1.1) !important;
+  }
 }
 
 @media (max-width: 768px) {
   .form-page {
     cursor: grab;
     -webkit-cursor: grab;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
 
   .form-page.dragging {
@@ -190,7 +140,7 @@
   }
 }
 
-/* Prevent iOS Safari bounce scrolling during drag */
+/* Prevent scrolling during drag */
 body.dragging {
   overflow: hidden;
   position: fixed;
@@ -199,36 +149,93 @@ body.dragging {
   touch-action: none;
 }
 
-
-.form-page.drag-settling-physics {
-  animation: dragPhysicsSettle 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  animation-fill-mode: forwards;
+/* New page animation */
+.form-page.newly-added {
+  animation: pageSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
-/* Enhanced Physics Drop with Natural Inertia and Damping */
-@keyframes dragPhysicsSettle {
+/* Delete animation */
+.form-page.deleting {
+  animation: pageDelete 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes pageDelete {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+}
+
+/* Drag settle animation - Dynamic spring based on drag distance */
+.form-page.drag-settling-spring {
+  animation: dragPhysicsSettleSpring var(--spring-duration, 0.8s) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation-fill-mode: forwards;
+  will-change: transform, box-shadow;
+  /* Add a subtle initial shadow for the animation */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes dragPhysicsSettleSpring {
   0% {
-    transform: scale(1.05) translateY(-3px) rotate(1.2deg);
+    transform: scale(calc(1 + 0.06 * var(--spring-intensity, 1))) 
+               translateY(calc(-4px * var(--spring-intensity, 1))) 
+               rotate(calc(1.5deg * var(--spring-intensity, 1)));
+    box-shadow: 0 calc(6px * var(--spring-intensity, 1)) calc(25px * var(--spring-intensity, 1)) rgba(0, 0, 0, 0.15);
   }
-  12% {
-    transform: scale(0.94) translateY(1.2px) rotate(-0.4deg);
+  10% {
+    transform: scale(calc(1 - 0.05 * var(--spring-intensity, 1))) 
+               translateY(calc(1.8px * var(--spring-intensity, 1))) 
+               rotate(calc(-0.7deg * var(--spring-intensity, 1)));
+    box-shadow: 0 calc(2px * var(--spring-intensity, 1)) calc(10px * var(--spring-intensity, 1)) rgba(0, 0, 0, 0.08);
   }
-  25% {
-    transform: scale(1.03) translateY(-1px) rotate(0.2deg);
+  20% {
+    transform: scale(calc(1 + 0.04 * var(--spring-intensity, 1))) 
+               translateY(calc(-1.4px * var(--spring-intensity, 1))) 
+               rotate(calc(0.4deg * var(--spring-intensity, 1)));
+    box-shadow: 0 calc(4px * var(--spring-intensity, 1)) calc(15px * var(--spring-intensity, 1)) rgba(0, 0, 0, 0.12);
   }
-  40% {
-    transform: scale(0.98) translateY(0.6px) rotate(-0.08deg);
+  32% {
+    transform: scale(calc(1 - 0.025 * var(--spring-intensity, 1))) 
+               translateY(calc(0.9px * var(--spring-intensity, 1))) 
+               rotate(calc(-0.2deg * var(--spring-intensity, 1)));
+    box-shadow: 0 calc(2px * var(--spring-intensity, 1)) calc(8px * var(--spring-intensity, 1)) rgba(0, 0, 0, 0.06);
   }
-  58% {
-    transform: scale(1.01) translateY(-0.3px) rotate(0.04deg);
+  45% {
+    transform: scale(calc(1 + 0.015 * var(--spring-intensity, 1))) 
+               translateY(calc(-0.6px * var(--spring-intensity, 1))) 
+               rotate(calc(0.1deg * var(--spring-intensity, 1)));
+    box-shadow: 0 calc(3px * var(--spring-intensity, 1)) calc(10px * var(--spring-intensity, 1)) rgba(0, 0, 0, 0.08);
+  }
+  60% {
+    transform: scale(calc(1 - 0.008 * var(--spring-intensity, 1))) 
+               translateY(calc(0.3px * var(--spring-intensity, 1))) 
+               rotate(calc(-0.05deg * var(--spring-intensity, 1)));
   }
   75% {
-    transform: scale(0.995) translateY(0.15px) rotate(-0.015deg);
+    transform: scale(calc(1 + 0.004 * var(--spring-intensity, 1))) 
+               translateY(calc(-0.15px * var(--spring-intensity, 1))) 
+               rotate(calc(0.02deg * var(--spring-intensity, 1)));
   }
-  90% {
-    transform: scale(1.003) translateY(-0.08px) rotate(0.008deg);
+  88% {
+    transform: scale(calc(1 - 0.002 * var(--spring-intensity, 1))) 
+               translateY(calc(0.06px * var(--spring-intensity, 1)));
   }
   100% {
     transform: scale(1) translateY(0) rotate(0deg);
+    box-shadow: none;
   }
 }

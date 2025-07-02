@@ -25,10 +25,11 @@ const PageButton: React.FC<PageProps> = React.memo(
     isDeleting = false,
     isOver = false,
   }) => {
-    const [settleState, setSettleState] = useState<"settle" | "none">("none");
+    const [settleState, setSettleState] = useState<"none" | "spring">("none");
     const [wasJustDragging, setWasJustDragging] = useState(false);
-    const [isBridging, setIsBridging] = useState(false);
     const buttonRef = useRef<HTMLDivElement>(null);
+    const dragStartPosRef = useRef({ x: 0, y: 0 }); // Store initial drag position
+    const maxDistanceRef = useRef(0); // Track maximum distance reached
 
     const {
       attributes,
@@ -39,28 +40,116 @@ const PageButton: React.FC<PageProps> = React.memo(
       isDragging: isSortableDragging,
     } = useSortable({ id: page.id });
 
-    // Enhanced physics-based settling
+    // Track drag distance with global mouse/touch events
     useEffect(() => {
+      if (isSortableDragging) {
+        const handleGlobalMove = (e: MouseEvent | TouchEvent) => {
+          // Only track if we have a valid drag start position
+          if (
+            dragStartPosRef.current.x === 0 &&
+            dragStartPosRef.current.y === 0
+          )
+            return;
 
+          const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+          const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+
+          // Calculate current distance from drag start
+          const distance = Math.sqrt(
+            Math.pow(clientX - dragStartPosRef.current.x, 2) +
+              Math.pow(clientY - dragStartPosRef.current.y, 2)
+          );
+
+          // Track maximum distance reached
+          if (distance > maxDistanceRef.current) {
+            maxDistanceRef.current = distance;
+          }
+        };
+
+        // Add event listeners
+        document.addEventListener("mousemove", handleGlobalMove);
+        document.addEventListener("touchmove", handleGlobalMove);
+
+        return () => {
+          document.removeEventListener("mousemove", handleGlobalMove);
+          document.removeEventListener("touchmove", handleGlobalMove);
+        };
+      }
+    }, [isSortableDragging]);
+
+    // handle settling state with animation
+    useEffect(() => {
       if (isSortableDragging || isDragging) {
-        setWasJustDragging(true);
-        setSettleState("none");
+        // Only initialize on the first drag start (prevent multiple resets)
+        if (!wasJustDragging) {
+          setWasJustDragging(true);
+          setSettleState("none");
+
+          // Reset drag tracking when drag starts
+          maxDistanceRef.current = 0;
+
+          // Use the element's center position as the drag start reference (only once)
+          if (buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            dragStartPosRef.current = {
+              x: rect.left + rect.width / 2,
+              y: rect.top + rect.height / 2,
+            };
+          }
+        }
       } else if (wasJustDragging && !isSortableDragging && !isDragging) {
-        // Add bridge transition first, then settle
-        setIsBridging(true);
         setTimeout(() => {
-          setIsBridging(false);
-          setSettleState("settle");
+          const dragDistance = maxDistanceRef.current;
+          console.log(`Drag distance: ${dragDistance}px`);
+
+          let duration: number;
+          let springIntensity: number;
+          if (dragDistance < 200) {
+            duration = 400;
+            springIntensity = 0.8;
+          } else if (dragDistance < 400) {
+            // Smooth curve between the extremes
+            duration = 400;
+            springIntensity = 1;
+          } else if (dragDistance < 800) {
+            // Smooth curve between the extremes
+            duration = 600;
+            springIntensity = 1;
+          } else {
+            // Cap the maximum values for very large drags
+            duration = 800;
+            springIntensity = 1;
+          }
+
+          setSettleState("spring");
+
+          // Set the dynamic duration and intensity via CSS custom properties
+          if (buttonRef.current) {
+            buttonRef.current.style.setProperty(
+              "--spring-duration",
+              `${duration}ms`
+            );
+            buttonRef.current.style.setProperty(
+              "--spring-intensity",
+              springIntensity.toString()
+            );
+          }
+          setTimeout(
+            () => {
+              setSettleState("none");
+              setWasJustDragging(false);
+            },
+            duration - 200 > 400 ? duration - 200 : 400
+          ); // Ensure minimum duration
         }, 120); // Bridge duration
       }
-
     }, [isSortableDragging, isDragging, wasJustDragging, transform]);
+
+    // We no longer need to track velocity as we're using a pure distance-based animation
 
     const shouldDisableTransition =
       isSortableDragging || isDragging || settleState !== "none";
 
-    // During settle animations, let CSS handle opacity completely
-    // Only hide during active dragging to prevent double-visibility
     const shouldHideOriginal = isSortableDragging;
 
     const style = {
@@ -84,29 +173,6 @@ const PageButton: React.FC<PageProps> = React.memo(
       }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!isSortableDragging) {
-          if (page.isActive) {
-            // For keyboard accessibility, we'll trigger context menu at the center of the element
-            const rect = e.currentTarget.getBoundingClientRect();
-            const fakeMouseEvent = {
-              preventDefault: () => {},
-              stopPropagation: () => {},
-              currentTarget: e.currentTarget,
-              clientX: rect.left + rect.width / 2,
-              clientY: rect.top + rect.height / 2,
-            } as React.MouseEvent;
-            onContextMenu(fakeMouseEvent);
-          } else {
-            onSelect();
-          }
-        }
-      }
-    };
-
     const handleFocus = (e: React.FocusEvent) => {
       // Prevent focus during drag operations
       if (isSortableDragging || isDragging || wasJustDragging) {
@@ -114,7 +180,6 @@ const PageButton: React.FC<PageProps> = React.memo(
         (e.currentTarget as HTMLElement).blur();
       }
     };
-
     return (
       <div
         ref={(node) => {
@@ -128,16 +193,15 @@ const PageButton: React.FC<PageProps> = React.memo(
           isDragging ? "dragging" : ""
         } ${isNewlyAdded ? "newly-added" : ""} ${
           isDeleting ? "deleting" : ""
-        } ${isBridging ? "drag-bridge" : ""} ${
-          settleState === "settle" ? "drag-settling-physics" : ""
-        } ${isOver ? "drag-over" : ""}`}
+        }  ${settleState === "spring" ? "drag-settling-spring" : ""} ${
+          isOver ? "drag-over" : ""
+        }`}
         data-page={page.name}
         role="button"
         tabIndex={0}
         aria-label={`${page.name} page${page.isActive ? " (active)" : ""}`}
         aria-pressed={page.isActive}
         onClick={handleClick}
-        onKeyDown={handleKeyDown}
         onFocus={handleFocus}
       >
         <div className="page-content">
